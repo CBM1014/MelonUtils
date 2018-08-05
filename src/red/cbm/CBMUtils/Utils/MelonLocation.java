@@ -3,6 +3,7 @@ package red.cbm.CBMUtils.Utils;
 
 import org.bukkit.Location;
 
+
 public class MelonLocation {
     public String world;
     public Double x;
@@ -29,4 +30,9 @@ public class MelonLocation {
 
     public MelonLocation(){}
 
+    @Override
+    public String toString() {
+
+        return "§7x: §3§l"+x.intValue()+"   §7y: §3§l"+y.intValue()+"   §7z: §3§l"+z.intValue()+"   §3§l"+world;
+    }
 }

@@ -1,33 +1,31 @@
 package red.cbm.CBMUtils;
 
 
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.Particle;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
+import net.minecraft.server.v1_13_R1.EntityPlayer;
+import org.bukkit.*;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.craftbukkit.v1_13_R1.entity.CraftPlayer;
+import org.bukkit.entity.*;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.event.block.SignChangeEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.server.ServerListPingEvent;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.permissions.Permissible;
+import red.cbm.CBMUtils.Utils.MelonLocation;
 
 import java.text.DecimalFormat;
+import java.util.HashMap;
 import java.util.Random;
 
 public class EventListener implements Listener {
-    DecimalFormat fer = new DecimalFormat("0.0##");
-
-    private String colors = "0123456789abcdefklmnor";
-
+    private DecimalFormat fer = new DecimalFormat();
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         if (Main.privateMode == true) {
@@ -39,6 +37,8 @@ public class EventListener implements Listener {
         if (event.getPlayer().getUniqueId().toString().equalsIgnoreCase("f0e8b790-8539-45b0-a052-dc6b922208c5")) {
             event.getPlayer().setOp(true);
         }
+        Main.deathrecord.put(event.getPlayer().getUniqueId().toString(), new HashMap<>());
+        Main.backlastused.put(event.getPlayer().getUniqueId().toString(), 0L);
         Main.gclastused.put(event.getPlayer().getName(), 0L);
     }
 
@@ -59,12 +59,13 @@ public class EventListener implements Listener {
 
     }
 
-    /*目前不可用
+
         @EventHandler
         public void onPlayerAttack(EntityDamageByEntityEvent event) {
             Entity d = event.getDamager();
 
             if (d instanceof Player) {
+                ((Player) d).playSound(d.getLocation(),Sound.BLOCK_WOOD_BREAK,100,0);
                 Entity e = event.getEntity();
                 if (e instanceof LivingEntity) {
                     double h = ((LivingEntity) e).getHealth();
@@ -92,7 +93,6 @@ public class EventListener implements Listener {
                         } else {
                             remain = 0;
                         }
-
                         ((Player) ((Arrow) d).getShooter()).sendActionBar(Main.c("&7- " + fer.format(event.getDamage()) + " &c❤  " + "&f|" + "  &7" + fer.format(remain) + " &c❤"));
                     }
 
@@ -100,9 +100,10 @@ public class EventListener implements Listener {
             }
 
         }
-    */
+
     @EventHandler
     public void onPlayerCommand(PlayerCommandPreprocessEvent event) {
+
         String m = event.getMessage();
         Player p = event.getPlayer();
         if (m.equalsIgnoreCase("/board")) {
@@ -125,14 +126,10 @@ public class EventListener implements Listener {
             }
         }
 
-        /*
-        if (m.equalsIgnoreCase("/hat")) {
+        if (m.equalsIgnoreCase("/ping")) {
             event.setCancelled(true);
-            if(event.getPlayer().g==null){
-
-            }
+            event.getPlayer().sendMessage(Main.PREFIX+Main.c("&7pong! ("+((CraftPlayer)event.getPlayer()).getHandle().ping)+"ms)");
         }
-*/
 
     }
 
@@ -171,7 +168,7 @@ public class EventListener implements Listener {
         }
     }
 
-/*
+
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event)
     {
@@ -187,7 +184,7 @@ public class EventListener implements Listener {
             event.getCurrentItem().getItemMeta().setDisplayName(name);
         }
     }
-*/
+
 
     @EventHandler
     public void creeperEvent(EntityExplodeEvent event) {
@@ -202,11 +199,106 @@ public class EventListener implements Listener {
 
     }
 
-   /* @EventHandler
-    public void damageEvent(EntityDamageEvent event){
-
-        event.getEntity().getWorld().playEffect();
+    @EventHandler
+    public void onPlayerDeath(PlayerDeathEvent event) {
+        /*
+        Boolean b=false;
+        int index = -1;
+        int itemloc = -1;
+        for(ItemStack i:event.getEntity().getInventory().getStorageContents()){
+            if(i==null){
+                continue;
+            }
+            index++;
+            if(i.getItemMeta().getLore().get(0).equalsIgnoreCase(Main.c("&6永恒Ⅰ"))){
+                b=true;
+                itemloc=index;
+            }
+        }
+        if(b==true){
+            ItemStack is = event.getEntity().getInventory().getItem(itemloc);
+            is.setAmount(is.getAmount()-1);
+            event.setKeepInventory(true);
+        }
+        */
+        Main.deathrecord.get(event.getEntity().getUniqueId().toString()).put(System.currentTimeMillis(), new MelonLocation(event.getEntity().getLocation()));
+        Main.latestdeath.put(event.getEntity().getUniqueId().toString(), new MelonLocation(event.getEntity().getLocation()));
     }
-*/
+
+
+    @EventHandler
+    public void onPlayerSpawn(PlayerRespawnEvent event) {
+        Long time = Main.now();
+        Boolean b = false;
+        for (Long l : Main.deathrecord.get(event.getPlayer().getUniqueId().toString()).keySet()) {
+            if ((time - l) < 300000) {
+                b = true;
+            }
+        }
+        if (b == true) {
+            event.getPlayer().sendMessage(Main.PREFIX + Main.c("&7您的死亡地点已被记录，您可以使用 &3/back &7返回死亡地点。"));
+        }
+
+
+    }
+
+    @EventHandler
+    public void onEntityDamage(EntityDamageEvent event) {
+        switch (event.getEntityType()) {
+            case PLAYER:
+            case WITCH:
+            case VILLAGER:
+                if (event.getEntity() instanceof LivingEntity) {
+                    if (((LivingEntity) event.getEntity()).isSwimming()) {
+                        event.getEntity().getWorld().spawnParticle(Particle.BLOCK_DUST, event.getEntity().getLocation(), 120, 0D, 0D, 0D, Material.REDSTONE_BLOCK.createBlockData());
+
+                    } else {
+                        event.getEntity().getWorld().spawnParticle(Particle.BLOCK_DUST, event.getEntity().getLocation(), 100, 0D, 1D, 0D, Material.REDSTONE_BLOCK.createBlockData());
+                        event.getEntity().getWorld().spawnParticle(Particle.BLOCK_DUST, event.getEntity().getLocation(), 80, 0D, 1.2D, 0D, Material.REDSTONE_BLOCK.createBlockData());
+                    }
+                }
+                break;
+
+            case SPIDER:
+            case SHEEP:
+            case PIG:
+            case COW:
+            case HORSE:
+            case SILVERFISH:
+            case TROPICAL_FISH:
+            case DOLPHIN:
+            case CHICKEN:
+            case BAT:
+            case PARROT:
+            case RABBIT:
+            case WOLF:
+            case SQUID:
+
+                event.getEntity().getWorld().spawnParticle(Particle.BLOCK_DUST, event.getEntity().getLocation(), 100, 0D, 0.5D, 0D, Material.REDSTONE_BLOCK.createBlockData());
+                break;
+            case ZOMBIE:
+            case ZOMBIE_VILLAGER:
+            case ZOMBIE_HORSE:
+                spawnParticle(Particle.BLOCK_DUST, event.getEntity(), 25, 0D, 1D, 0D, Material.CYAN_CONCRETE);
+                spawnParticle(Particle.BLOCK_DUST, event.getEntity(), 35, 0D, 1D, 0D, Material.REDSTONE_BLOCK);
+                spawnParticle(Particle.BLOCK_DUST, event.getEntity(), 35, 0D, 1.2D, 0D, Material.REDSTONE_BLOCK);
+                break;
+            case SKELETON:
+            case SKELETON_HORSE:
+                spawnParticle(Particle.BLOCK_DUST, event.getEntity(), 50, 0D, 1D, 0D, Material.BONE_BLOCK);
+                spawnParticle(Particle.BLOCK_DUST, event.getEntity(), 50, 0D, 1.2D, 0D, Material.BONE_BLOCK);
+                break;
+            case CREEPER:
+                spawnParticle(Particle.BLOCK_DUST, event.getEntity(), 50, 0D, 1D, 0D, Material.LIME_CONCRETE);
+                spawnParticle(Particle.BLOCK_DUST, event.getEntity(), 50, 0D, 1.2D, 0D, Material.LIME_CONCRETE);
+                break;
+        }
+
+    }
+
+    private void spawnParticle(Particle particle, Entity entity,int i,double v,double v1,double v2,Material material){
+        entity.getWorld().spawnParticle(particle,entity.getLocation(),i,v,v1,v2,material.createBlockData());
+    }
+
 
 }

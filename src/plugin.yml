@@ -2,6 +2,7 @@ name: CBMUtils
 main: red.cbm.CBMUtils.Main
 version: Alpha1.0
 softdepend: [PlaceholderAPI]
+api-version: 1.13
 commands:
   gc:
     description: 启动垃圾清理
@@ -9,3 +10,9 @@ commands:
   testmode:
       description: 开启/关闭调试模式
       usage: /testmode
+  back:
+    description: 回到上一次的死亡地点
+    usage: /back
+  help:
+    description: 显示服务器帮助
+    usage: /help
