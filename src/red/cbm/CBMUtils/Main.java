@@ -5,10 +5,12 @@ import com.mojang.datafixers.kinds.Const;
 import io.netty.util.Constant;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.v1_13_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import red.cbm.CBMUtils.Utils.MelonLocation;
@@ -182,6 +184,19 @@ public class Main extends JavaPlugin {
                 }
 
             }
+        }else if(command.getName().equalsIgnoreCase("hat")){
+            if (!(sender instanceof Player)) {
+                sender.sendMessage(ONLY_PLAYER_NOTICE);
+                return true;
+            }
+            ItemStack is = ((Player)sender).getInventory().getItemInMainHand();
+            if(is.getType()== Material.AIR){
+                sender.sendMessage(PREFIX+c("&7你的手上没有物品哦~"));
+                return true;
+            }
+            ((Player)sender).getInventory().setItemInMainHand(((Player)sender).getInventory().getHelmet());
+            ((Player)sender).getInventory().setHelmet(is);
+            sender.sendMessage(PREFIX+c("&7新帽子换好啦！"));
         }
         return true;
     }

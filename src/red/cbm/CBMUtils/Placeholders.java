@@ -15,14 +15,12 @@ public class Placeholders extends EZPlaceholderHook {
     @Override
     public String onPlaceholderRequest(Player player, String string) {
         if (string.equals("status")) {
-
             double d[] = Bukkit.getTPS();
-
             if(d[0]>19.5){
                 return Main.c("&7良好");
-            }else if(d[0]>19){
-                return Main.c("&7平稳");
             }else if(d[0]>18){
+                return Main.c("&7平稳");
+            }else if(d[0]>17){
                 return Main.c("&e一般");
             }else{
                 return Main.c("&c欠佳");

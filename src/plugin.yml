@@ -16,3 +16,6 @@ commands:
   help:
     description: 显示服务器帮助
     usage: /help
+  hat:
+    description: 将当前手上的物品戴在头上。
+    usage: /hat
