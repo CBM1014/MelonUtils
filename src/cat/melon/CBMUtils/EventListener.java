@@ -1,25 +1,20 @@
-package red.cbm.CBMUtils;
+package cat.melon.CBMUtils;
 
 
-import net.minecraft.server.v1_13_R2.EntityPlayer;
 import org.bukkit.*;
-import org.bukkit.block.data.BlockData;
 import org.bukkit.craftbukkit.v1_13_R2.entity.CraftPlayer;
 import org.bukkit.entity.*;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.entity.*;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.server.ServerListPingEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import red.cbm.CBMUtils.Utils.MelonLocation;
+import cat.melon.CBMUtils.Utils.MelonLocation;
 
 import java.text.DecimalFormat;
 import java.util.*;

@@ -1,23 +1,18 @@
-package red.cbm.CBMUtils;
+package cat.melon.CBMUtils;
 
 
-import com.mojang.datafixers.kinds.Const;
-import io.netty.util.Constant;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Server;
-import org.bukkit.block.data.type.Switch;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.v1_13_R2.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
-import red.cbm.CBMUtils.Utils.MelonLocation;
+import cat.melon.CBMUtils.Utils.MelonLocation;
 
 import java.util.*;
 
@@ -59,7 +54,7 @@ public class Main extends JavaPlugin {
 
         }
 
-        getServer().getPluginManager().registerEvents(new EventListener(), this);
+        getServer().getPluginManager().registerEvents(new cat.melon.CBMUtils.EventListener(), this);
 
 
         new BukkitRunnable() {

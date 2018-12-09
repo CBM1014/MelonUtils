@@ -1,4 +1,4 @@
-package red.cbm.CBMUtils;
+package cat.melon.CBMUtils;
 
 public class Constants {
     public static final String SERVER_MOTD = Main.c("&6&lWelcome to CBM Survival! &b&l[SEASON IV]\n&3| 生存 | 养老 | 工艺 | 新周目开荒 | 1.13.2 Released |");

@@ -1,5 +1,5 @@
 name: CBMUtils
-main: red.cbm.CBMUtils.Main
+main: cat.melon.CBMUtils.Main
 version: Alpha1.0
 softdepend: [PlaceholderAPI]
 api-version: 1.13
