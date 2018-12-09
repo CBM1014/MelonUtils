@@ -1,4 +1,4 @@
-package red.cbm.CBMUtils.Utils;
+package cat.melon.CBMUtils.Utils;
 
 
 import org.bukkit.Location;

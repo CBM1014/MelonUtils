@@ -1,4 +1,4 @@
-package red.cbm.CBMUtils;
+package cat.melon.CBMUtils;
 
 import me.clip.placeholderapi.external.EZPlaceholderHook;
 import org.bukkit.Bukkit;
