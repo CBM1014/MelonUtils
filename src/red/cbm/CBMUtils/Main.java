@@ -19,10 +19,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import red.cbm.CBMUtils.Utils.MelonLocation;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 public class Main extends JavaPlugin {
@@ -195,7 +192,12 @@ public class Main extends JavaPlugin {
             boolean canTeleprot = false;
             long now = now();
             StringBuilder sb1 = new StringBuilder();
-            for (Long l : deathrecord.get(((Player) sender).getUniqueId().toString()).keySet()) {
+            ArrayList<Long> tmpl= new ArrayList<>();
+            for (Long l:deathrecord.get(((Player) sender).getUniqueId().toString()).keySet()){
+                tmpl.add(l);
+            }
+            Collections.reverse(tmpl);
+            for (Long l : tmpl) {
                 hasdeathrecord = true;
                 if ((now - l) < 300000) {
                     sb1.append(deathrecord.get(((Player) sender).getUniqueId().toString()).get(l).toString() + "    §7" + ((now - l) / 1000) + "秒前\n");
@@ -219,8 +221,8 @@ public class Main extends JavaPlugin {
 
                 if (melonloc.y < 0) {
                     if (recodenumbers > 1) {
-                        sender.sendMessage(c("&7您上一次死于虚空，不能进行传送。&7这里找到了您的多个死亡记录:"));
                         sender.sendMessage(sb1.toString());
+                        sender.sendMessage(c("&7您上一次死于虚空，不能进行传送。以上是您的死亡记录:"));
                     } else {
                         sender.sendMessage(PREFIX + c("&7您上一次死于虚空，不能进行传送。&7您上一次的死亡位置:"));
                         sender.sendMessage(sb1.toString());
@@ -229,7 +231,7 @@ public class Main extends JavaPlugin {
                     Location location = new Location(Bukkit.getWorld(melonloc.world), melonloc.x, melonloc.y, melonloc.z, 0F, 0F);
                     if (recodenumbers > 1) {
                         sender.sendMessage(sb1.toString());
-                        sender.sendMessage(c("&7找到了您的多个死亡记录。&7正在前往上一次死亡的地点..."));
+                        sender.sendMessage(c("&7以上是您的死亡记录。&7正在前往上一次的死亡地点..."));
                     } else {
                         sender.sendMessage(PREFIX + c("&7正在前往死亡地点..."));
                     }
@@ -240,14 +242,16 @@ public class Main extends JavaPlugin {
                 }
 
             } else {
-                sender.sendMessage(BACK_NOT_COOLDOWN(((Player) sender).getUniqueId().toString()));
                 if (recodenumbers > 1) {
-                    sender.sendMessage(c("&7找到了您的多个死亡记录。"));
                     sender.sendMessage(sb1.toString());
+                    sender.sendMessage(BACK_NOT_COOLDOWN(((Player) sender).getUniqueId().toString()));
+                    sender.sendMessage(c("&7以上是您的死亡记录。"));
                 } else {
+                    sender.sendMessage(BACK_NOT_COOLDOWN(((Player) sender).getUniqueId().toString()));
                     sender.sendMessage(c("&7上一次死亡的位置:"));
                     sender.sendMessage(sb1.toString());
                 }
+
             }
         } else if (command.getName().equalsIgnoreCase("help")) {
             sender.sendMessage(Constants.HELP_HEAD);
@@ -298,7 +302,6 @@ public class Main extends JavaPlugin {
         String result = in.replace("&", "§");
         result = result.replace("§§", "&");
         return result;
-
     }
 
     private int getPing(Player p) {
